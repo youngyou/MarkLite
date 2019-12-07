@@ -260,32 +260,8 @@ class Configure: NSObject, NSCoding {
     }
     
     func checkProAvailable(_ completion:((Bool)->Void)? = nil){
-//        #if DEBUG
-//            self.expireDate = Date.distantFuture
-//            completion?(self.isPro)
-//            return
-//        #endif
-
-        IAP.validateReceipt(itunesSecret) { (statusCode, products, json) in
-            defer {
-                DispatchQueue.main.async {
-                    print("会员到期\(self.expireDate.readableDate())")
-                    print("会员状态\(self.isPro)")
-                    completion?(self.isPro)
-                }
-            }
-            if let code = statusCode {
-                if code == ReceiptStatus.noRecipt.rawValue {
-                    self.expireDate = Date.longlongAgo()
-                    return
-                }
-            }
-            guard let products = products else {
-                return
-            }
-            print("products: \(products)")
-            let proIdentifier = [premiumForeverProductID,premiumYearlyProductID,premiumMonthlyProductID]
-            self.expireDate = proIdentifier.map{ products[$0] ?? Date(timeIntervalSince1970: 0) }.max() ?? Date(timeIntervalSince1970: 0)
-        }
+        self.expireDate = Date.distantFuture
+        completion?(self.isPro)
+        return
     }
 }

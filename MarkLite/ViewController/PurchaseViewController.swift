@@ -101,24 +101,15 @@ class PurchaseViewController: UIViewController {
         impactIfAllow()
         ActivityIndicator.show()
 
-        IAP.restorePurchases { (identifiers, error) in
-            if let err = error {
-                ActivityIndicator.dismiss()
-                print(err.localizedDescription)
-                ActivityIndicator.showError(withStatus: error?.localizedDescription)
-                return
+        Configure.shared.checkProAvailable({ (availabel) in
+            SVProgressHUD.dismiss()
+            if availabel {
+                SVProgressHUD.showSuccess(withStatus: /"RestoreSuccess")
+                self.dismiss(animated: true, completion: nil)
+            } else {
+                SVProgressHUD.showError(withStatus: /"RestoreFailed")
             }
-            Configure.shared.checkProAvailable({ (availabel) in
-                ActivityIndicator.dismiss()
-                if availabel {
-                    ActivityIndicator.showSuccess(withStatus: /"RestoreSuccess")
-                    self.dismiss(animated: true, completion: nil)
-                } else {
-                    ActivityIndicator.showError(withStatus: /"RestoreFailed")
-                }
-            })
-            print(identifiers)
-        }
+        })
     }
     
     func purchaseProduct(_ identifier: String) {

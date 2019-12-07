@@ -303,6 +303,33 @@ class File {
         _children = newChildren
     }
     
+    func createSubDir(name: String) -> File? {
+        let path = (self.path + "/" + name)
+        let child = self.childAtPath(path)
+        if child != nil {
+            return child
+        } else {
+            try? fileManager.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+            let file = File(path: path, parent: self)
+                  _children.append(file)
+            return file
+        }
+    }
+    
+    func createDirs(paths: [String]) -> File? {
+        var f = self;
+        
+        for p in paths {
+            let nf = f.createSubDir(name: p)
+            if nf == nil {
+                return nil
+            } else {
+                f = nf!
+            }
+        }
+        return f
+    }
+    
     @discardableResult
     func createFile(name: String, contents: Any? = nil, type: FileType) -> File?{
         let ext = type.defaultExtName.count == 0 ? "" : ".\(type.defaultExtName)"

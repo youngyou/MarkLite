@@ -103,9 +103,12 @@ extension String {
             return self
         }
         var newPath = self
-        let arr = self.components(separatedBy: ".")
+        var arr = self.components(separatedBy: ".")
         if arr.count > 1 {
-            newPath = arr[0].pathByAppendingNumber() + "." + arr[1]
+            let ext = arr.popLast()
+            let fn = arr.popLast()!.pathByAppendingNumber() + "." + ext!
+            
+            newPath = arr.joined(separator: ".") + "." + fn
         } else {
             newPath = arr[0].pathByAppendingNumber()
         }
